@@ -1,0 +1,67 @@
+# Decodelab Project 3: AI Recommendation Logic System
+# Developed by: Philomina Paul-Ubah
+
+# 1. Dataset: Catalog of available items with associated tags/categories
+CATALOG = [
+    {"id": 1, "name": "Wireless Headphones", "category": "Electronics", "tags": ["tech", "music", "audio", "gadgets"]},
+    {"id": 2, "name": "Running Shoes", "category": "Footwear", "tags": ["sports", "fitness", "running", "outdoors"]},
+    {"id": 3, "name": "Python Programming Guide", "category": "Books", "tags": ["tech", "coding", "education", "books"]},
+    {"id": 4, "name": "Smart Fitness Watch", "category": "Electronics", "tags": ["tech", "fitness", "gadgets", "health"]},
+    {"id": 5, "name": "Yoga Mat", "category": "Fitness", "tags": ["fitness", "health", "sports", "wellness"]},
+    {"id": 6, "name": "Sci-Fi Novel", "category": "Books", "tags": ["books", "reading", "fiction", "entertainment"]}
+]
+
+def get_user_preferences():
+    """Captures user input for interests."""
+    print("==================================================")
+    print("      DECODELAB PROJECT 3: AI RECOMMENDATION      ")
+    print("            Developer: Philomina Paul-Ubah        ")
+    print("==================================================\n")
+    print("Available interests: tech, sports, fitness, books, gadgets, health, music, outdoors\n")
+    
+    user_input = input("Enter your interests separated by commas (e.g., tech, fitness): ")
+    interests = [interest.strip().lower() for interest in user_input.split(",") if interest.strip()]
+    return interests
+
+def calculate_similarity(user_interests, item_tags):
+    """
+    Matches preferences using logic/similarity scoring.
+    Score = number of overlapping tags between user interests and item tags.
+    """
+    user_set = set(user_interests)
+    item_set = set(item_tags)
+    overlap = user_set.intersection(item_set)
+    return len(overlap)
+
+def recommend_items(user_interests, catalog, top_n=3):
+    """Generates and displays recommended items based on similarity scores."""
+    scored_items = []
+    
+    for item in catalog:
+        score = calculate_similarity(user_interests, item["tags"])
+        if score > 0:  # Only consider items with at least one match
+            scored_items.append((score, item))
+    
+    # Sort items by similarity score in descending order
+    scored_items.sort(key=lambda x: x[0], reverse=True)
+    
+    return scored_items[:top_n]
+
+def display_recommendations(scored_items):
+    """Displays the recommendations to the user."""
+    print("\n--- Decodelab Recommended Items ---")
+    if not scored_items:
+        print("No matches found based on your interests. Try different keywords!")
+        return
+    
+    for rank, (score, item) in enumerate(scored_items, start=1):
+        print(f"{rank}. {item['name']} | Category: {item['category']} (Match Score: {score})")
+
+# Run the project workflow
+if __name__ == "__main__":
+    user_interests = get_user_preferences()
+    if user_interests:
+        recommendations = recommend_items(user_interests, CATALOG)
+        display_recommendations(recommendations)
+    else:
+        print("No interests provided. Exiting Decodelab Project 3.")
